@@ -38,6 +38,29 @@ char *user_input()
 	return content;
 }
 
+char *basename(char *path)
+{
+	char *ptr, *base;
+	int i, size;
+
+	size = strlen(path);
+	for (i = size - 1; i >= 0; i--) {
+		if (path[i] == '/') {
+			if (i == size - 1) {
+				return NULL;
+			}
+			base = (char *)malloc((strlen(ptr) + 1) * sizeof(char));
+			strcpy(base, ptr);
+			return base;
+		}
+		ptr = &path[i];
+	}
+
+	base = (char *)malloc((size + 1) * sizeof(char));
+	strcpy(base, path);
+	return base;
+}
+
 size_t github_response(void *ptr, size_t size, size_t nmemb, void *stream)
 {
 	struct github_response *response = (struct github_response *)stream;
@@ -178,8 +201,7 @@ int main(int argc, char *argv[])
 		}
 		fread(content, 1, fsize, fp);
 		fclose(fp);
-		// @todo change filename variable to catch only the basename. Ie, -f ../file.txt must be converted to file.txt only
-		fakename = filename;
+		fakename = basename(filename);
 	}
 
 	j_file = json_object();
