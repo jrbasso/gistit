@@ -84,8 +84,8 @@ struct github_response *github_submit(json_t *content)
 		curl_easy_cleanup(curl);
 		if (code != 201) {
 			printf("Failed to post to GitHub\n- code %ld\n- response %s\n", code, response->response_text);
-			//free(&response->response_text);
-			//free(response);
+			free(response->response_text);
+			free(response);
 			response = NULL;
 		}
 	}
