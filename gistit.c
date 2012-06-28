@@ -83,7 +83,7 @@ struct github_response *github_submit(json_t *content)
 		curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &code);
 		curl_easy_cleanup(curl);
 		if (code != 201) {
-			printf("Failed to post to GitHub, code %ld\n", code);
+			printf("Failed to post to GitHub\n- code %ld\n- response %s\n", code, response->response_text);
 			//free(&response->response_text);
 			//free(response);
 			response = NULL;
@@ -105,7 +105,7 @@ void usage()
 	printf("  -d|--description <TEXT>   Send the text as gist description\n");
 	printf("  -priv                     Mark the gist as private\n");
 	printf("  -f <FILE>                 The gist will be <FILE>\n");
-	printf("  -t <TYPE>                 Specify the type when using gist by input content\n");
+	printf("  -i <FILENAME>             Fake filename to send to GitHub using the application input\n");
 }
 
 int main(int argc, char *argv[])
@@ -113,7 +113,7 @@ int main(int argc, char *argv[])
 	json_t *j_post, *j_files, *j_file, *j_response, *j_url;
 	json_error_t j_error;
 	int i, is_public = 1, fsize;
-	char *description = NULL, *filename = NULL, *content;
+	char *description = NULL, *filename = NULL, *fakename = NULL, *content;
 	FILE *fp;
 	struct github_response *response;
 
@@ -150,12 +150,17 @@ int main(int argc, char *argv[])
 			continue;
 		}
 
-		// @todo Check -t for file type/extension
+		if (strcmp(argv[i], "-i") == 0 && argv[i + 1] != NULL) {
+			fakename = argv[i + 1];
+			continue;
+		}
 	}
 
 	if (filename == NULL) {
-		filename = (char *)malloc(15 * sizeof(char));
-		strcpy(filename, "default.txt");
+		if (fakename == NULL) {
+			fakename = (char *)malloc(15 * sizeof(char));
+			strcpy(fakename, "default.txt");
+		}
 		content = user_input();
 	} else {
 		fp = fopen(filename, "r");
@@ -174,13 +179,14 @@ int main(int argc, char *argv[])
 		fread(content, 1, fsize, fp);
 		fclose(fp);
 		// @todo change filename variable to catch only the basename. Ie, -f ../file.txt must be converted to file.txt only
+		fakename = filename;
 	}
 
 	j_file = json_object();
 	json_object_set_new(j_file, "content", json_string(content));
 
 	j_files = json_object();
-	json_object_set_new(j_files, filename, j_file);
+	json_object_set_new(j_files, fakename, j_file);
 
 	j_post = json_object();
 	if (description != NULL) {
