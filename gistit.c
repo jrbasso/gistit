@@ -5,7 +5,10 @@
 #include "jansson.h"
 
 #define VERSION "0.1"
+
 #define STDIN_BUFFER_SIZE 1024
+#define DEFAULT_STDIN_FILENAME "default.txt"
+
 #define ENV_ACCESS_TOKEN_KEY "GISTIT_TOKEN"
 #define GITHUB_GIST_URL "https://api.github.com/gists?access_token=%s"
 
@@ -181,8 +184,8 @@ int main(int argc, char *argv[])
 
 	if (filename == NULL) {
 		if (fakename == NULL) {
-			fakename = (char *)malloc(15 * sizeof(char));
-			strcpy(fakename, "default.txt");
+			fakename = (char *)malloc((strlen(DEFAULT_STDIN_FILENAME) + 1) * sizeof(char));
+			strcpy(fakename, DEFAULT_STDIN_FILENAME);
 		}
 		content = user_input();
 	} else {
