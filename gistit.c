@@ -83,6 +83,7 @@ struct github_response *github_submit(json_t *content)
 	CURLcode res;
 	char url[100], *token;
 	struct github_response *response;
+	struct curl_slist *headers = NULL;
 	long code;
 
 	curl = curl_easy_init();
@@ -98,15 +99,19 @@ struct github_response *github_submit(json_t *content)
 		response->response_text[0] = '\0';
 		response->length = 0;
 
+		headers = curl_slist_append(headers, "Content-Type: application/json");
+
 		sprintf(url, GITHUB_GIST_URL, token);
 		curl_easy_setopt(curl, CURLOPT_URL, url);
 		curl_easy_setopt(curl, CURLOPT_POST, 1);
+		curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
 		curl_easy_setopt(curl, CURLOPT_POSTFIELDS, json_dumps(content, 0));
 		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, github_response);
 		curl_easy_setopt(curl, CURLOPT_WRITEDATA, response);
 
 		res = curl_easy_perform(curl);
 		curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &code);
+		curl_slist_free_all(headers);
 		curl_easy_cleanup(curl);
 		if (code != 201) {
 			printf("Failed to post to GitHub\n- code %ld\n- response %s\n", code, response->response_text);
