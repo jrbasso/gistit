@@ -7,7 +7,6 @@
 #define VERSION "0.1"
 
 #define STDIN_BUFFER_SIZE 1024
-#define DEFAULT_STDIN_FILENAME "default.txt"
 
 #define ENV_ACCESS_TOKEN_KEY "GISTIT_TOKEN"
 #define GITHUB_GIST_URL "https://api.github.com/gists?access_token=%s"
@@ -62,6 +61,29 @@ char *basename(char *path)
 	base = (char *)malloc((size + 1) * sizeof(char));
 	strcpy(base, path);
 	return base;
+}
+
+char *default_name(const char *content)
+{
+	// This method is very silly, but sometimes is better than mark always as text
+	char tmp[5];
+
+	strncpy(tmp, content, 4);
+	tmp[4] = '\0';
+	if (strcmp(tmp, "diff") == 0) {
+		return "default.diff";
+	} else if (strstr(content, "<?php") != NULL) {
+		return "default.php";
+	} else if (strstr(content, "<?xml") != NULL) {
+		return "default.xml";
+	} else if (strstr(content, "#include <stdio.h>") != NULL) {
+		return "default.c";
+	} else if (strstr(content, "import java.") != NULL) {
+		return "default.java";
+	} else if (strstr(content, "<html>") != NULL) {
+		return "default.html";
+	}
+	return "default.txt";
 }
 
 size_t github_response(void *ptr, size_t size, size_t nmemb, void *stream)
@@ -188,11 +210,10 @@ int main(int argc, char *argv[])
 	}
 
 	if (filename == NULL) {
-		if (fakename == NULL) {
-			fakename = (char *)malloc((strlen(DEFAULT_STDIN_FILENAME) + 1) * sizeof(char));
-			strcpy(fakename, DEFAULT_STDIN_FILENAME);
-		}
 		content = user_input();
+		if (fakename == NULL) {
+			fakename = default_name(content);
+		}
 	} else {
 		fp = fopen(filename, "r");
 		if (!fp) {
