@@ -1,8 +1,15 @@
 {
   "name": "gistit",
   "version": "0.1.0",
+  "author": "Juan Basso <jrbasso@gmail.com>",
+  "desciption": "Website for gistit tool",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jrbasso/gistit.git"
+  },
   "dependencies": {
-    "express": "3.0.x"
+    "express": "3.0.x",
+    "jade": "0.26.x"
   },
   "engines": {
     "node": "0.6.x"
