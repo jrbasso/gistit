@@ -1,0 +1,10 @@
+{
+  "name": "gistit",
+  "version": "0.1.0",
+  "dependencies": {
+    "express": "3.0.x"
+  },
+  "engines": {
+    "node": "0.6.x"
+  }
+}
