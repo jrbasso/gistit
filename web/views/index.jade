@@ -22,6 +22,12 @@ html(lang="en")
     .container
       header(class='jumbotron subhead')
         h1 Gist It!
-        p Under construction
+        if token
+          p= "Your token is: " + token
+          p Put the below code into your ~/.bashrc
+          code= "export GISTIT_TOKEN=\"" + token + "\""
+        else
+          p To get your token,
+            a(href=githubGetToken) click here
     a(href='https://github.com/jrbasso/gistit')
       img(style='position: absolute; top: 0; right: 0; border: 0; z-index: 2000', src='https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png', alt='Fork me on GitHub')
