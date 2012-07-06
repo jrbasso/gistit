@@ -1,7 +1,7 @@
 CC=gcc
 CFLAGS=-I. -Ijansson/src
 DEPS=
-OBJ=gistit.o
+OBJ=src/gistit.o
 LIBS=-lcurl
 
 %.o: %.c $(DEPS)
@@ -13,4 +13,4 @@ gistit: $(OBJ)
 .PHONY: clean
 
 clean:
-	rm -f *.o gistit
+	rm -f src/*.o gistit
