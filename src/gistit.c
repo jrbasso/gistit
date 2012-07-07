@@ -1,10 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <jansson.h>
 #include <curl/curl.h>
-#include "jansson.h"
 
-#define VERSION "0.1"
+#include "config.h"
 
 #define STDIN_BUFFER_SIZE 1024
 
@@ -147,7 +147,7 @@ struct github_response *github_submit(json_t *content)
 
 void version()
 {
-	printf("Gist It!\nVersion %s\n", VERSION);
+	printf("%s\nVersion %s\n", PACKAGE_NAME, PACKAGE_VERSION);
 }
 
 void usage()

@@ -1,3 +1,14 @@
 *.o
+*.in
+*.m4
+.deps
+autom4te.cache
+config*
+!configure.in
+depcomp
 gistit
+install-sh
+Makefile
+missing
 node_modules
+stamp-h1

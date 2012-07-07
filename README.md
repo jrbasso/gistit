@@ -4,18 +4,20 @@ Gist It is an application to create gists from console. It allows to create
 gist from input (ie, `git diff | gistit`) or from a specific file (ie,
 `gistit -f file.txt`).
 
+## Dependencies
+
+- [cURL](curl.haxx.se)
+- [jansson](https://github.com/akheron/jansson)
+
 ## Compiling
 
 ```shell
-	# Compile jansson
-	cd jansson
-	autoreconf -i
-	./configure
-	make
+	# Install cURL
+	# Install jansson
 
-	# Compile gistit
-	cd ..
+	./autogen.sh
 	make
+	make install
 ```
 
 ## Web Application

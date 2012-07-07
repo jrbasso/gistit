@@ -1,0 +1,26 @@
+AC_PREREQ([2.67])
+AC_INIT([Gist It!], [0.1], [jrbasso@gmail.com], [gistit], [http://gistit.herokuapp.com])
+AM_INIT_AUTOMAKE([1.10 -Wall no-define foreign])
+AC_CONFIG_SRCDIR([src/gistit.c])
+AC_CONFIG_HEADERS([config.h])
+
+# Checks for programs.
+AC_PROG_CC
+
+# Checks for libraries.
+AC_CHECK_LIB([curl], [curl_easy_init], [], [AC_MSG_ERROR(["Error: Required library curl not found. Check http://curl.haxx.se/"])])
+AC_CHECK_LIB([jansson], [json_object], [], [AC_MSG_ERROR(["Error: Required library jansson not found. Check https://github.com/akheron/jansson"])])
+
+# Checks for header files.
+AC_CHECK_HEADERS([stdio.h stdlib.h string.h])
+
+# Checks for typedefs, structures, and compiler characteristics.
+AC_TYPE_SIZE_T
+
+# Checks for library functions.
+AC_FUNC_MALLOC
+AC_FUNC_REALLOC
+AC_CHECK_FUNCS([strstr])
+
+AC_CONFIG_FILES([Makefile])
+AC_OUTPUT

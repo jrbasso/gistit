@@ -1,3 +1,0 @@
-[submodule "jansson"]
-	path = jansson
-	url = git://github.com/akheron/jansson.git
