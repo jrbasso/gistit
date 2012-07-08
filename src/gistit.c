@@ -16,6 +16,12 @@ struct github_response {
 	size_t length;
 };
 
+struct filelist {
+	char *filepath;
+	char *filename;
+	struct filelist *next;
+};
+
 char *user_input()
 {
 	char buffer[STDIN_BUFFER_SIZE], *content, *old;
@@ -145,6 +151,57 @@ struct github_response *github_submit(json_t *content)
 	return response;
 }
 
+struct filelist *filelist_create(char *filepath)
+{
+	struct filelist *list = (struct filelist *)malloc(sizeof(struct filelist));
+
+	list->filepath = filepath;
+	list->filename = basename(filepath);
+	list->next = NULL;
+	return list;
+}
+
+void filelist_add(struct filelist *list, char *filepath)
+{
+	struct filelist *current;
+
+	current = list;
+	while (current->next != NULL) {
+		current = current->next;
+	}
+	current->next = filelist_create(filepath);
+}
+
+json_t *json_from_filelist(struct filelist *file)
+{
+	FILE *fp;
+	int fsize;
+	char *content;
+	json_t *json;
+
+	fp = fopen(file->filepath, "r");
+	if (!fp) {
+		return NULL;
+	}
+	fseek(fp, 0, SEEK_END);
+	fsize = ftell(fp);
+	fseek(fp, 0, SEEK_SET);
+	content = (char *)malloc((fsize + 1) * sizeof(char));
+	if (content == NULL) {
+		return NULL;
+	}
+	if (fread(content, 1, fsize, fp) == 0) {
+		free(content);
+		fclose(fp);
+		return NULL;
+	}
+	fclose(fp);
+
+	json = json_object();
+	json_object_set_new(json, "content", json_string(content));
+	return json;
+}
+
 void version()
 {
 	printf("%s\nVersion %s\n", PACKAGE_NAME, PACKAGE_VERSION);
@@ -157,18 +214,18 @@ void usage()
 	printf("  -h|--help                 Show this message\n");
 	printf("  -d|--description <TEXT>   Send the text as gist description\n");
 	printf("  -priv                     Mark the gist as private\n");
-	printf("  -f <FILE>                 The gist will be <FILE>\n");
 	printf("  -i <FILENAME>             Fake filename to send to GitHub using the application input\n");
+	printf("  <FILE>                    The gist will include the <FILE> (you can specify multiple files)\n");
 }
 
 int main(int argc, char *argv[])
 {
 	json_t *j_post, *j_files, *j_file, *j_response, *j_url;
 	json_error_t j_error;
-	int i, is_public = 1, fsize;
-	char *description = NULL, *filename = NULL, *fakename = NULL, *content;
-	FILE *fp;
+	int i, is_public = 1;
+	char *description = NULL, *fakename = NULL, *content;
 	struct github_response *response;
+	struct filelist *files = NULL, *current;
 
 	// Check parameters
 	for (i = 1; i < argc; i++) {
@@ -197,9 +254,13 @@ int main(int argc, char *argv[])
 			continue;
 		}
 
-		// Leave -f to read from filename
-		if (strcmp(argv[i], "-f") == 0 && argv[i + 1] != NULL) {
-			filename = argv[i + 1];
+		// Reading files
+		if (argv[i][0] != '-') {
+			if (files == NULL) {
+				files = filelist_create(argv[i]);
+			} else {
+				filelist_add(files, argv[i]);
+			}
 			continue;
 		}
 
@@ -207,37 +268,35 @@ int main(int argc, char *argv[])
 			fakename = argv[i + 1];
 			continue;
 		}
+
+		printf("Warning: Unknown parameter: %s\n", argv[i]);
 	}
 
-	if (filename == NULL) {
+	// Creating the JSON list of files
+	j_files = json_object();
+
+	if (files == NULL) {
 		content = user_input();
 		if (fakename == NULL) {
 			fakename = default_name(content);
 		}
+
+		j_file = json_object();
+		json_object_set_new(j_file, "content", json_string(content));
+		json_object_set_new(j_files, fakename, j_file);
 	} else {
-		fp = fopen(filename, "r");
-		if (!fp) {
-			printf("Failed to open the specified file\n");
-			return EXIT_FAILURE;
-		}
-		fseek(fp, 0, SEEK_END);
-		fsize = ftell(fp);
-		fseek(fp, 0, SEEK_SET);
-		content = (char *)malloc((fsize + 1) * sizeof(char));
-		if (content == NULL) {
-			printf("Error allocating space for read the file. Seems the file is too big\n");
-			return EXIT_FAILURE;
-		}
-		fread(content, 1, fsize, fp);
-		fclose(fp);
-		fakename = basename(filename);
+		current = files;
+		do {
+			j_file = json_from_filelist(current);
+			if (j_file == NULL) {
+				printf("Failed to open the file: %s\n", current->filepath);
+				return EXIT_FAILURE;
+			} else {
+				json_object_set_new(j_files, current->filename, j_file);
+			}
+			current = current->next;
+		} while(current != NULL);
 	}
-
-	j_file = json_object();
-	json_object_set_new(j_file, "content", json_string(content));
-
-	j_files = json_object();
-	json_object_set_new(j_files, fakename, j_file);
 
 	j_post = json_object();
 	if (description != NULL) {
