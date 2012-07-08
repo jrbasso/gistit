@@ -232,13 +232,13 @@ int main(int argc, char *argv[])
 		// Version
 		if (strcmp(argv[i], "-v") == 0 || strcmp(argv[i], "--version") == 0) {
 			version();
-			return 0;
+			return EXIT_SUCCESS;
 		}
 
 		// Help/usage
 		if (strcmp(argv[i], "-h") == 0 || strcmp(argv[i], "--help") == 0) {
 			usage();
-			return 0;
+			return EXIT_SUCCESS;
 		}
 
 		// Set the gist description
