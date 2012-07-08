@@ -10,6 +10,7 @@
 
 #define ENV_ACCESS_TOKEN_KEY "GISTIT_TOKEN"
 #define GITHUB_GIST_URL "https://api.github.com/gists?access_token=%s"
+#define GITHUB_GIST_URL_ANONYMOUS "https://api.github.com/gists"
 
 struct github_response {
 	char *response_text;
@@ -116,12 +117,6 @@ struct github_response *github_submit(json_t *content)
 
 	curl = curl_easy_init();
 	if (curl) {
-		token = getenv(ENV_ACCESS_TOKEN_KEY);
-		if (token == NULL) {
-			printf("Gist It! Token is not defined. Please define the %s environement\n", ENV_ACCESS_TOKEN_KEY);
-			return NULL;
-		}
-
 		response = (struct github_response *)malloc(1 * sizeof(struct github_response));
 		response->response_text = (char *)malloc(1 * sizeof(char));
 		response->response_text[0] = '\0';
@@ -129,7 +124,13 @@ struct github_response *github_submit(json_t *content)
 
 		headers = curl_slist_append(headers, "Content-Type: application/json");
 
-		sprintf(url, GITHUB_GIST_URL, token);
+		token = getenv(ENV_ACCESS_TOKEN_KEY);
+		if (token != NULL) {
+			sprintf(url, GITHUB_GIST_URL, token);
+		} else {
+			sprintf(url, GITHUB_GIST_URL_ANONYMOUS);
+		}
+
 		curl_easy_setopt(curl, CURLOPT_URL, url);
 		curl_easy_setopt(curl, CURLOPT_POST, 1);
 		curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
