@@ -9,25 +9,104 @@ html(lang="en")
     link(rel='stylesheet', href='/css/app.css')
     script(src='/js/bootstrap.min.js')
   body(data-spy="scroll", data-target=".subnav", data-offset="50")
-    .navbar.navbar-fixed-top
-      .navbar-inner
-        .container
-          a(href='/').brand Gist It!
-          .nav-collapse.collapse
-            ul.nav
-              li.active
-                a(href='/') Overview
+    .container-fluid
+      .row-fluid
+
+        .span9
+
+          section.hero-unit#home
+            h1 Gist It!
+            p Gist It! is an application that allow you to create 
+              a(href='https://gist.github.com') GitHub Gist
+              |  from the terminal very easily.
+
+          section#usage
+            h1 How to use?
+            p The application can be used in 2 different ways
+            ul
               li
-                a(href='/how-it-works') How it works?
-    .container
-      header(class='jumbotron subhead')
-        h1 Gist It!
-        if token
-          p= "Your token is: " + token
-          p Put the below code into your ~/.bashrc
-          code= "export GISTIT_TOKEN=\"" + token + "\""
-        else
-          p To get your token,
-            a(href=githubGetToken) click here
+                strong Console input:
+                |  Read the input and generate a fake file to submit. Ie, 
+                code git diff | gistit
+              li
+                strong Files:
+                |  Specify one or more files to be submitted, Ie, 
+                code gistit file1.txt file2.c file3.js
+
+            h2 Available parameters
+            p All the parameters are optional, but helps you to customize your gist.
+            ul
+              li
+                strong -v
+                |  or 
+                strong --version
+                |  - Show the application version and exit
+              li
+                strong -h
+                |  or 
+                strong --help
+                |  - Show the avaliable parameters and how to use
+              li
+                strong -d &lt;STRING&gt;
+                |  or 
+                strong --description &lt;STRING&gt;
+                |  - Set the GitHub Gist description
+              li
+                strong -priv
+                |  - Set the gist to be private. It will not mark exclusive only
+                | for you, but to anyone with the link
+              li
+                strong -i &lt;FILENAME&gt;
+                |  - Define the filename for console input. Setting the filename
+                | makes the GitHub highlight the text based on the extension.
+                | This parameter has no action when used with files.
+              li
+                strong &lt;FILE&gt;
+                |  - Use the FILE on the gist. You can specify multiple files.
+
+            h2 Examples
+
+            h3 Creating from files
+            pre
+              | $ gistit ~/.bashrc ~/Documents/share.txt
+              | Gist URL: https://gist.github.com/12345
+
+            h3 Creating from some application output
+            pre
+              | $ ls | gistit
+              | Gist URL: https://gist.github.com/12345
+            p It is similar of:
+            pre
+              | $ ls > default.txt
+              | $ gistit default.txt
+              | Gist URL: https://gist.github.com/12345
+
+            h3 Specify description and mark as private
+            pre
+              | ls | gistit -d "My computer files" -priv
+              | Gist URL: https://gist.github.com/12345
+
+            h3 Define a custom filename to the gist
+            pre
+              | git diff | gistit -i my_commit.diff
+              | Gist URL: https://gist.github.com/12345
+
+          section#github_account
+          h1 Creating gist with your GitHub account
+          p You can configure your environment to create gist with your GitHub
+           |  account.
+          if token
+            p You already have the token, put it in your
+              code ~/.bashrc
+              |  file:
+            code
+              | export GISTIT_TOKEN="#{token}"
+          else
+            p If you do not have your token, create one 
+              a(href=githubGetToken) clicking here
+              | .
+
     a(href='https://github.com/jrbasso/gistit')
       img(style='position: absolute; top: 0; right: 0; border: 0; z-index: 2000', src='https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png', alt='Fork me on GitHub')
+    script(src='https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js')
+    script(src='/js/bootstrap.min.js')
