@@ -4,15 +4,10 @@
 #include <jansson.h>
 
 #include "config.h"
+#include "filelist.h"
 #include "github.h"
 
 #define STDIN_BUFFER_SIZE 1024
-
-struct filelist {
-	char *filepath;
-	char *filename;
-	struct filelist *next;
-};
 
 char *user_input()
 {
@@ -82,27 +77,6 @@ char *default_name(const char *content)
 		return "default.html";
 	}
 	return "default.txt";
-}
-
-struct filelist *filelist_create(char *filepath)
-{
-	struct filelist *list = (struct filelist *)malloc(sizeof(struct filelist));
-
-	list->filepath = filepath;
-	list->filename = basename(filepath);
-	list->next = NULL;
-	return list;
-}
-
-void filelist_add(struct filelist *list, char *filepath)
-{
-	struct filelist *current;
-
-	current = list;
-	while (current->next != NULL) {
-		current = current->next;
-	}
-	current->next = filelist_create(filepath);
 }
 
 json_t *json_from_filelist(struct filelist *file)
