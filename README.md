@@ -11,7 +11,7 @@ gist from input (ie, `git diff | gistit`) or from a specific file (ie,
 
 If you are using Ubuntu:
 ```shell
-sudo apt-get install libcurl4-openssl-dev libjansson-dev
+sudo apt-get install libcurl3 libjansson4
 ```
 
 ## Usage
@@ -52,7 +52,10 @@ associate with your account. See instructions on [http://gistit.herokuapp.com/].
 
 ```shell
 # Install cURL
+sudo apt-get install libcurl4-openssl-dev
+
 # Install jansson
+sudo apt-get install libjansson-dev
 
 ./autogen.sh
 make
