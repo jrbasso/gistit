@@ -2,12 +2,51 @@
 
 Gist It is an application to create gists from console. It allows to create
 gist from input (ie, `git diff | gistit`) or from a specific file (ie,
-`gistit -f file.txt`).
+`gistit file.txt`).
 
 ## Dependencies
 
-- [cURL](curl.haxx.se)
+- [cURL](http://curl.haxx.se)
 - [jansson](https://github.com/akheron/jansson)
+
+If you are using Ubuntu:
+```shell
+	sudo apt-get install libcurl4-openssl-dev libjansson-dev
+```
+
+## Usage
+
+```shell
+	# Creating a public gist from other app response
+	ls | gistit
+
+	# Creating a private gist from other app response
+	ls | gistit -priv
+
+	# Specifying the gist filename
+	ls | gistit -i list.txt
+
+	# Sending files
+	gistit file.txt
+
+	# Sending multiple files in a private gist
+	gistit -priv file1.txt file2.c
+
+	# Setting gist description
+	gistit -d "This is just a sample" sample.txt
+
+	# Setting gist description, private and with multiple files
+	gistit -d "Sample" -priv file1.txt file2.txt file3.txt
+
+	# Help
+	gistit -h
+
+	# Version
+	gistit -v
+```
+
+By default the `gistit` create the GitHub Gist as anonymous, but you can configure to
+associate with your account. See instructions on [http://gistit.herokuapp.com/].
 
 ## Compiling
 
