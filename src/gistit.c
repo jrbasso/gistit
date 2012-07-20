@@ -150,14 +150,19 @@ int main(int argc, char *argv[])
 
 		// Set the gist description
 		if ((strcmp(argv[i], "-d") == 0 || strcmp(argv[i], "--description") == 0) && argv[i + 1] != NULL) {
-			description = argv[i + 1];
-			i += 1;
+			description = argv[++i];
 			continue;
 		}
 
 		// Define the gist as private
 		if (strcmp(argv[i], "-priv") == 0) {
 			is_public = 0;
+			continue;
+		}
+
+		// Get the gist filename
+		if (strcmp(argv[i], "-i") == 0 && argv[i + 1] != NULL) {
+			fakename = argv[++i];
 			continue;
 		}
 
@@ -168,11 +173,6 @@ int main(int argc, char *argv[])
 			} else {
 				filelist_add(files, argv[i]);
 			}
-			continue;
-		}
-
-		if (strcmp(argv[i], "-i") == 0 && argv[i + 1] != NULL) {
-			fakename = argv[i + 1];
 			continue;
 		}
 
