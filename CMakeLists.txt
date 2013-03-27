@@ -1,7 +1,5 @@
 cmake_minimum_required(VERSION 2.8)
 
-set(CMAKE_C_COMPILER "clang")
-
 project(gistit)
 
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
@@ -22,3 +20,6 @@ add_executable(gistit ${GISTIT_SOURCES})
 target_link_libraries(gistit
     ${JANSSON_LIBRARIES}
     ${CURL_LIBRARIES})
+
+INSTALL(TARGETS gistit
+        DESTINATION "bin")

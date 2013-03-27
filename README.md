@@ -14,6 +14,11 @@ If you are using Ubuntu:
 sudo apt-get install libcurl3 libjansson4
 ```
 
+If you are using Arch Linux:
+```shell
+sudo pacman -S curl jansson
+```
+
 ## Usage
 
 ```shell
