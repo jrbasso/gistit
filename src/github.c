@@ -12,7 +12,7 @@ struct github_response *github_submit(json_t *content)
 	CURL *curl;
 	CURLcode res;
 	char url[100], *token;
-	struct github_response *response;
+	struct github_response *response = NULL;
 	struct curl_slist *headers = NULL;
 	long code;
 
