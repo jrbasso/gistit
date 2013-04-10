@@ -95,6 +95,7 @@ json_t *json_from_filelist(struct filelist *file)
 	fseek(fp, 0, SEEK_SET);
 	content = (char *)malloc((fsize + 1) * sizeof(char));
 	if (content == NULL) {
+		fclose(fp);
 		return NULL;
 	}
 	if (fread(content, 1, fsize, fp) == 0) {
