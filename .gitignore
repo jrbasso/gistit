@@ -5,6 +5,7 @@
 autom4te.cache
 config*
 !configure.in
+!src/config.h.in
 depcomp
 gistit
 install-sh
