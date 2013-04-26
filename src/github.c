@@ -1,4 +1,5 @@
 #include "github.h"
+#include "config.h"
 #include <jansson.h>
 #include <curl/curl.h>
 
@@ -11,7 +12,7 @@ struct github_response *github_submit(json_t *content)
 {
 	CURL *curl;
 	CURLcode res;
-	char url[100], *token;
+	char url[100], userAgent[40], *token;
 	struct github_response *response = NULL;
 	struct curl_slist *headers = NULL;
 	long code;
@@ -24,6 +25,8 @@ struct github_response *github_submit(json_t *content)
 		response->length = 0;
 
 		headers = curl_slist_append(headers, "Content-Type: application/json");
+		sprintf(userAgent, "User-Agent: %s/%s", PACKAGE_NAME, PACKAGE_VERSION);
+		headers = curl_slist_append(headers, userAgent);
 
 		token = getenv(ENV_ACCESS_TOKEN_KEY);
 		if (token != NULL) {
