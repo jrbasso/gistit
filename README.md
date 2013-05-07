@@ -19,6 +19,11 @@ If you are using Arch Linux:
 sudo pacman -S curl jansson
 ```
 
+If you are using OS X with homebrew
+````shell
+brew install gistit
+````
+
 ## Usage
 
 ```shell
