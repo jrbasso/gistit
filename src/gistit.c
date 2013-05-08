@@ -110,6 +110,27 @@ json_t *json_from_filelist(struct filelist *file)
 	return json;
 }
 
+int copy_to_clipboard(const char *url) {
+	int response;
+	char command_line[1000];
+
+	// Try to copy on Mac OS X
+	sprintf(command_line, "echo %s | pbcopy", url);
+	response = system(command_line);
+	if (response == 0) {
+		return 1;
+	}
+
+	// Try to copy os Xorg
+	sprintf(command_line, "echo %s | xclip -selection clipboard", url);
+	response = system(command_line);
+	if (response == 0) {
+		return 1;
+	}
+
+	return 0;
+}
+
 void version()
 {
 	printf("%s\nVersion %s\n", PACKAGE_NAME, PACKAGE_VERSION);
@@ -121,6 +142,7 @@ void usage()
 	printf("  -v|--version              Show the application version\n");
 	printf("  -h|--help                 Show this message\n");
 	printf("  -d|--description <TEXT>   Send the text as gist description\n");
+	printf("  --copy                    Copy the gist URL to clipboard (when available)\n");
 	printf("  -priv                     Mark the gist as private\n");
 	printf("  -i <FILENAME>             Fake filename to send to GitHub using the application input\n");
 	printf("  <FILE>                    The gist will include the <FILE> (you can specify multiple files)\n");
@@ -130,7 +152,7 @@ int main(int argc, char *argv[])
 {
 	json_t *j_post, *j_files, *j_file, *j_response, *j_url;
 	json_error_t j_error;
-	int i, is_public = 1;
+	int i, is_public = 1, copy_clipboard = 0;
 	char *description = NULL, *fakename = NULL, *content;
 	struct github_response *response;
 	struct filelist *files = NULL, *current;
@@ -164,6 +186,12 @@ int main(int argc, char *argv[])
 		// Get the gist filename
 		if (strcmp(argv[i], "-i") == 0 && argv[i + 1] != NULL) {
 			fakename = argv[++i];
+			continue;
+		}
+
+		// Copy the URL to clipboard
+		if (strcmp(argv[i], "--copy") == 0) {
+			copy_clipboard = 1;
 			continue;
 		}
 
@@ -228,6 +256,14 @@ int main(int argc, char *argv[])
 		return EXIT_FAILURE;
 	}
 	printf("Gist URL: %s\n", json_string_value(j_url));
+
+	if (copy_clipboard) {
+		if (copy_to_clipboard(json_string_value(j_url))) {
+			printf("URL copied to clipboard\n");
+		} else {
+			printf("Unable to copy the URL to clipboard\n");
+		}
+	}
 
 	return EXIT_SUCCESS;
 }
