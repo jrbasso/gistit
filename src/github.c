@@ -4,15 +4,18 @@
 #include <curl/curl.h>
 
 #define GITHUB_GIST_URL "https://api.github.com/gists?access_token=%s"
+#define ENTERPRISE_GITHUB_GIST_URL "%s/gists?access_token=%s"
+
 #define GITHUB_GIST_URL_ANONYMOUS "https://api.github.com/gists"
 
 #define ENV_ACCESS_TOKEN_KEY "GISTIT_TOKEN"
+#define ENV_GITHUB_API_URL "GISTIT_API_URL"
 
 struct github_response *github_submit(json_t *content)
 {
 	CURL *curl;
 	CURLcode res;
-	char url[100], userAgent[40], *token;
+	char url[100], userAgent[40], *token, *api_url;
 	struct github_response *response = NULL;
 	struct curl_slist *headers = NULL;
 	long code;
@@ -27,14 +30,17 @@ struct github_response *github_submit(json_t *content)
 		headers = curl_slist_append(headers, "Content-Type: application/json");
 		sprintf(userAgent, "User-Agent: %s/%s", PACKAGE_NAME, PACKAGE_VERSION);
 		headers = curl_slist_append(headers, userAgent);
-
+		api_url = getenv(ENV_GITHUB_API_URL);
 		token = getenv(ENV_ACCESS_TOKEN_KEY);
 		if (token != NULL) {
-			sprintf(url, GITHUB_GIST_URL, token);
+			if (api_url == NULL) {
+				sprintf(url, GITHUB_GIST_URL, token);
+			} else {
+				sprintf(url, ENTERPRISE_GITHUB_GIST_URL, api_url, token);
+			}
 		} else {
 			sprintf(url, GITHUB_GIST_URL_ANONYMOUS);
 		}
-
 		curl_easy_setopt(curl, CURLOPT_URL, url);
 		curl_easy_setopt(curl, CURLOPT_POST, 1);
 		curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
