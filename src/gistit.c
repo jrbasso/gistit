@@ -205,7 +205,9 @@ int main(int argc, char *argv[])
 			continue;
 		}
 
-		printf("Warning: Unknown parameter: %s\n", argv[i]);
+		printf("Error: Unknown parameter: %s\n", argv[i]);
+                usage();
+                exit(EXIT_FAILURE);
 	}
 
 	// Creating the JSON list of files
