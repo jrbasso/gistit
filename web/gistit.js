@@ -1,16 +1,13 @@
-var express = require('express');
-var http = require('https');
+const express = require('express');
+const path = require('path');
+const http = require('https');
+const PORT = process.env.PORT || 5000;
 
-var app = express.createServer(express.logger());
+var app = express();
 
-app.use(express.methodOverride());
-app.use(express.logger());
-app.use(express.bodyParser());
-app.use(app.router);
-app.use(express.static(__dirname + '/public'));
-app.use(express.errorHandler());
-app.set('views', __dirname + '/views');
-app.set('view engine', 'jade');
+app.use(express.static(path.join(__dirname, 'public')));
+app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'pug');
 
 app.get('/', function(req, res) {
   var githubGetToken = 'https://github.com/login/oauth/authorize?client_id=' + process.env.GITHUB_CLIENT_ID + '&scope=gist';
@@ -43,9 +40,8 @@ app.get('/', function(req, res) {
   }
 });
 
-var port = process.env.PORT || 80;
-app.listen(port, function() {
-  console.log("Listening on " + port);
+app.listen(PORT, function() {
+  console.log("Listening on " + PORT);
 });
 
 function getAccessToken(code, callback) {
