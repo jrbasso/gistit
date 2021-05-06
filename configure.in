@@ -1,5 +1,5 @@
 AC_PREREQ([2.67])
-AC_INIT([Gist It!], [0.1.3], [jrbasso@gmail.com], [gistit], [http://gistit.herokuapp.com])
+AC_INIT([Gist It!], [0.1.4], [jrbasso@gmail.com], [gistit], [http://gistit.herokuapp.com])
 AM_INIT_AUTOMAKE([1.10 -Wall no-define foreign])
 AC_CONFIG_SRCDIR([src/gistit.c])
 AC_CONFIG_HEADERS([config.h])
