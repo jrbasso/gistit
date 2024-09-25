@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "express": "4.19.2",
-    "pug": "^3.0.1"
+    "pug": "^3.0.3"
   },
   "engines": {
     "node": "8.9.4"
