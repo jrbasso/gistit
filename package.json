@@ -9,7 +9,7 @@
     "url": "https://github.com/jrbasso/gistit.git"
   },
   "dependencies": {
-    "express": "4.19.2",
+    "express": "4.20.0",
     "pug": "^3.0.3"
   },
   "engines": {
